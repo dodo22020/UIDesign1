@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Minjoo's Shelf | Hobby Collection</title>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="main.css" type="text/css" />
+  
+  <style>
+    /* 🚨 중요: #bookcase의 width, height는 절대 추가하지 않습니다! 
+      (main.css에 있는 기본 크기를 그대로 유지합니다.)
+    */
+    #bookcase {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly; /* 정해진 책장 높이 안에서 선반들의 위아래 간격을 균등하게 벌려줍니다 */
+      /* gap: 10px; (만약 선반 사이가 너무 좁다면 이 주석을 풀고 사용하세요) */
+    }
+
+    /* --- 각각의 선반 (한 층) --- */
+    .shelf {
+      display: flex;
+      justify-content: space-around; /* 정해진 책장 너비 안에서 이미지들의 가로 간격을 균등하게 벌려줍니다 */
+      align-items: flex-end; /* 이미지들을 선반 바닥에 딱 맞게 내려놓습니다 */
+      
+      /* 선반의 디자인 (자유롭게 변경 가능한 부분) */
+      border-bottom: 20px solid #8b5a2b; /* 나무 선반 느낌의 바닥선 */
+      padding-bottom: 5px; /* 이미지와 선반 바닥 사이의 아주 살짝 띄운 여백 */
+      margin-bottom: 20px; /* 다음 선반과의 여백 */
+    }
+
+    /* --- 선반 위 이미지(게임 패키지) --- */
+    .shelf img {
+      /* 이미지가 책장 너비를 뚫고 나가지 않도록 비율(%)로 크기를 제한합니다 */
+      width: 22%; /* 한 선반에 4개가 들어가므로 25%보다 조금 작게 설정하여 여백 확보 */
+      max-width: 180px; /* 원본 이미지가 너무 커지는 것을 방지 */
+      height: auto; /* 세로 비율은 원본에 맞춰 자동으로 조절 */
+      
+      /* 장식용 그림자 효과 (자유롭게 변경 가능) */
+      box-shadow: -3px 3px 5px rgba(0,0,0,0.3);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Minjoo's Shelf<br />Hobby Collection</h1>
+
+  <div id="bookcase">
+    
+    <div class="shelf">
+      <img src="img/image 1.jpg" alt="Pokemon 1" />
+      <img src="img/image 2.jpg" alt="Pokemon 2" />
+      <img src="img/image 3.jpg" alt="Pokemon 3" />
+      <img src="img/image 4.jpg" alt="Animal Crossing" />
+    </div>
+
+    <div class="shelf">
+      <img src="img/image 5.jpg" />
+      <img src="img/image 6.jpg" />
+      <img src="img/image 7.jpg" />
+      <img src="img/image 8.jpg" />
+    </div>
+
+    <div class="shelf">
+      <img src="img/image 9.jpg" />
+      <img src="img/image 10.jpg" />
+      <img src="img/image 11.jpg" />
+      <img src="img/image 12.jpg" />
+    </div>
+
+    <div class="shelf">
+      </div>
+
+  </div>
+
+</body>
+</html>
