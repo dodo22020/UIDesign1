@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>CSS Room Still Life (Symmetrical & Clean)</title>
+  <title>CSS Room Still Life (With Back Button)</title>
   <style>
     /* 모든 요소에 box-sizing 적용 */
     * { box-sizing: border-box; }
@@ -16,6 +16,22 @@
       margin: 0;
       background-color: #fdf6e3;
       overflow: hidden;
+    }
+
+    /* ⭐️ 뒤로가기 버튼 스타일 ⭐️ */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      text-decoration: none;
+      color: #333;
+      font-family: monospace; /* 메인 페이지와 비슷한 글꼴 느낌 */
+      font-size: 16px;
+      font-weight: bold;
+      z-index: 10;
+    }
+    .back-btn:hover {
+      text-decoration: underline;
     }
 
     /* 캔버스 */
@@ -39,8 +55,7 @@
       z-index: 0;
     }
 
-    /* --- 양쪽 탁자 (침대와 완벽한 대칭 간격 유지) --- */
-    /* 침대는 left: 135px에서 시작해서 width: 330px (끝나는 지점 465px) */
+    /* --- 양쪽 탁자 --- */
     .table {
       position: absolute;
       bottom: 285px;
@@ -48,9 +63,7 @@
       height: 80px;
       z-index: 1;
     }
-    /* 왼쪽 탁자: 45 + 80(너비) = 125px (침대와 10px 간격) */
     .table.l { left: 45px; } 
-    /* 오른쪽 탁자: 475px 시작 (침대 끝 465px와 10px 간격) */
     .table.r { left: 475px; } 
     
     .table-top { 
@@ -199,6 +212,8 @@
   </style>
 </head>
 <body>
+
+  <a href="index.html" class="back-btn">back to main</a>
 
   <div class="room">
     <div class="carpet"></div>
