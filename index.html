@@ -4,17 +4,57 @@
 <head>
   <title>Minjoo Do | UI Design Programming 1</title>
   <meta charset="utf-8" />
-  <style>
-    #grid {display: flex; height: 100vh;}
-    #left-column {width: 50%; padding: 50px; display: flex; flex-direction: column; justify-content: space-between;}
-    #right-column {width: 50%; display: flex; align-items: center; padding-left: 0px; justify-content: flex-start;}
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
-    pre {font-family: monospace; font-size: 14px; line-height: 1.2;}
+  <style>
+    /* 2. 전체 페이지 글꼴 적용 */
+    body {
+      font-family: "Playfair Display", Arial, "Helvetica Neue", Helvetica, sans-serif;
+      margin: 0; /* 브라우저 기본 여백 제거 */
+    }
+
+    /* 3. 링크(a) 색상 및 애니메이션 설정 */
+    a, a:visited {
+      transition: all 500ms ease;
+      color: blue;
+    }
+    
+    a:hover {
+      color: limegreen;  
+    }
+
+    /* 4. 기존 레이아웃 코드 */
+    #grid {
+      display: flex; 
+      height: 100vh;
+    }
+    #left-column {
+      width: 50%; 
+      padding: 50px; 
+      display: flex; 
+      flex-direction: column; 
+      justify-content: space-between;
+    }
+    #right-column {
+      width: 50%; 
+      display: flex; 
+      align-items: center; 
+      padding-left: 0px; 
+      justify-content: flex-start;
+    }
+
+    pre {
+      font-family: monospace; 
+      font-size: 14px; 
+      line-height: 1.2;
+    }
   </style>
 </head>
 
 <body>
-
   <div id="grid">
     
     <div id="left-column"> 
@@ -24,16 +64,14 @@
         <ul>
           <li>My favorite food is Boba Tea</li>
           <li>My favorite song is Espresso by Sabrina Carpenter</li>
-          <li>My favorite website is <a href="">Netflixs</a></li>
+          <li>My favorite website is <a href="">Netflix</a></li>
         </ul>
         <br>
         
         <h3>Exercises</h3>
         <ul>
           <li><a href="ascii/interior-minjoodo.html">ASCII Town</a></li>
-          
           <li><a href="still life home.html">Coding from Life</a></li>
-
           <li><a href="myshelf/myshelf.html">Code My Shelf</a></li>
         </ul>
       </div>
@@ -64,5 +102,6 @@
       </pre>
     </div>
     
-  </div> </body>
+  </div> 
+</body>
 </html>

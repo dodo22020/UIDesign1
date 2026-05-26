@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>다각형 시계 (Graph Style)</title>
+  <style>
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      /* AM/PM 테마 전환 시 부드러운 애니메이션 효과 */
+      transition: background 0.5s ease, color 0.5s ease;
+    }
+
+    /* 오전(AM) 테마: 흰색 배경, 검은색 도형 */
+    body.am {
+      background: white;
+      color: black;
+    }
+
+    /* 오후(PM) 테마: 검은색 배경, 흰색 도형 */
+    body.pm {
+      background: black;
+      color: white;
+    }
+
+    #clock {
+      display: flex;
+      gap: 4vw;
+      align-items: center;
+    }
+
+    svg {
+      width: 25vw;
+      height: 25vw;
+      max-width: 300px;
+      max-height: 300px;
+    }
+
+    /* 다각형 선 스타일 (면은 비우고 선만 남김) */
+    polygon {
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.5;
+      stroke-linejoin: round;
+    }
+
+    /* 꼭짓점(점) 스타일 */
+    circle {
+      fill: currentColor;
+    }
+  </style>
+</head>
+<body>
+  <div id="clock"></div>
+
+  <script>
+    const clock = document.querySelector("#clock");
+
+    // 선과 꼭짓점이 강조된 도형을 그리는 함수
+    function createShape(timeValue, isHour) {
+      const sides = isHour ? (timeValue % 12 || 12) + 3 : timeValue + 3;
+      const radius = 45; // 꼭짓점(원)이 잘리지 않도록 반지름을 약간 줄임
+      const points = [];
+      let circles = "";
+
+      for (let i = 0; i < sides; i++) {
+        const angle = (i * 2 * Math.PI / sides) - (Math.PI / 2);
+        const x = 50 + radius * Math.cos(angle);
+        const y = 50 + radius * Math.sin(angle);
+        
+        points.push(`${x},${y}`);
+        // 각 꼭짓점 위치에 작은 원(circle)을 생성하여 한붓그리기 느낌 강조
+        circles += `<circle cx="${x}" cy="${y}" r="3" />`;
+      }
+
+      return `
+        <svg viewBox="0 0 100 100">
+          <polygon points="${points.join(' ')}" />
+          ${circles}
+        </svg>
+      `;
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      // AM/PM 확인 및 body 클래스(테마) 교체
+      if (hours < 12) {
+        document.body.className = "am";
+      } else {
+        document.body.className = "pm";
+      }
+
+      // 화면에 시, 분, 초 렌더링
+      clock.innerHTML = createShape(hours, true) + createShape(minutes, false) + createShape(seconds, false);
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
