@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>piece & pace</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Preahvihear&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset & Base Styles */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Preahvihear", sans-serif;
+      background-color: #ffffff; 
+      display: flex; justify-content: center; padding: 40px 20px; min-height: 100vh; color: #333;
+    }
+
+    /* Main Container */
+    .main-container {
+      background-color: #ffffff; width: 100%; max-width: 1100px; 
+      border-radius: 20px; overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      position: relative; display: flex; flex-direction: column; min-height: 750px;
+    }
+
+    /* Decorative Circles */
+    .deco-circle { position: absolute; border-radius: 50%; z-index: 1; pointer-events: none; }
+    .circle-1 { width: 10px; height: 10px; background-color: #fbdca8; top: 15%; left: 8%; }
+    .circle-2 { width: 24px; height: 24px; background-color: #fde2e2; border: 1.5px solid #f5baba; top: 20%; left: 15%; }
+    .circle-3 { width: 14px; height: 14px; background-color: #e5eedf; border: 1.5px solid #aebc9e; top: 18%; right: 25%; }
+    .circle-4 { width: 18px; height: 18px; background-color: #d8e2e8; top: 12%; right: 8%; }
+    .circle-5 { width: 16px; height: 16px; background-color: #f8e5a6; bottom: 35%; right: 10%; }
+    .circle-6 { width: 8px; height: 8px; background-color: #aebc9e; bottom: 20%; right: 18%; }
+
+    /* Global Header */
+    .global-header {
+      padding: 20px 40px; border-bottom: 1px solid #eaeaea; background: #ffffff;
+      z-index: 10; display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo-text { font-weight: 600; font-size: 22px; cursor: pointer; }
+    .header-actions { display: flex; align-items: center; gap: 15px; }
+    .user-greeting { font-size: 16px; color: #666; display: none; font-weight: bold; }
+    .header-btn {
+      background-color: transparent; border: 2px solid #ccc; padding: 6px 16px; 
+      border-radius: 20px; font-family: inherit; font-size: 14px; cursor: pointer; color: #333; transition: 0.2s;
+    }
+    .header-btn:hover { background-color: #f0f0f0; }
+
+    /* Page Navigation */
+    .page-content { display: none; flex-grow: 1; animation: fadeIn 0.4s ease; position: relative; z-index: 5; }
+    .page-content.active { display: flex; flex-direction: column; }
+    .page-content.active.planner-layout { flex-direction: row; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- PAGE 1: HOME --- */
+    #page-home .hero-section { text-align: center; padding: 60px 20px 40px; }
+    #page-home .hero-title { font-size: 56px; font-weight: bold; margin-bottom: 16px; color: #222; }
+    #page-home .hero-subtitle { font-size: 18px; color: #666; line-height: 1.5; }
+    #page-home .character-showcase { display: flex; justify-content: center; gap: 60px; padding-bottom: 50px; }
+    #page-home .character-image { width: 220px; height: 220px; object-fit: contain; }
+    .btn-main { background-color: #dfc8a9; color: #725b42; border: 2px solid #bba383; padding: 16px 48px; border-radius: 16px; font-size: 20px; font-family: inherit; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+    .btn-main:hover { transform: translateY(-3px); opacity: 0.9; }
+
+    /* --- PAGE 2: SELECTION --- */
+    .selection-header { text-align: center; padding: 40px 20px 20px; }
+    .selection-title { font-size: 36px; margin-bottom: 12px; font-weight: bold; }
+    .selection-subtitle { font-size: 18px; color: #666; }
+    
+    .cards-container { display: flex; justify-content: center; align-items: flex-end; gap: 60px; padding: 0 40px 60px; margin-top: 130px; }
+    .type-card { flex: 1; max-width: 360px; display: flex; flex-direction: column; position: relative; }
+    .card-img-wrapper { position: absolute; top: -120px; left: 50%; transform: translateX(-50%); z-index: 2; }
+    .card-img-wrapper img { width: 140px; object-fit: contain; }
+    
+    .info-box { flex-grow: 1; display: flex; flex-direction: column; border-radius: 16px; padding: 50px 30px 30px; margin-top: 60px; }
+    .beaver-box { background-color: #fcf5e6; border: 1.5px solid #f2e3d3; }
+    .cat-box { background-color: #f5eff5; border: 1.5px solid #e9d9ef; }
+    
+    .type-heading { font-size: 22px; margin-bottom: 24px; font-weight: bold; text-align: center; color: #333; }
+    
+    .checklist { list-style: none; width: 100%; margin-bottom: 30px; flex-grow: 1; }
+    .checklist li { display: flex; align-items: center; margin-bottom: 16px; font-size: 16px; color: #333; gap: 12px; }
+    
+    .checklist input[type="checkbox"] {
+      appearance: none; width: 18px; height: 18px; border: 1.5px solid #aaa; border-radius: 4px; background: #fff; cursor: pointer; position: relative; display: flex; justify-content: center; align-items: center;
+    }
+    .checklist input[type="checkbox"]:checked::after { content: '✔'; font-size: 12px; font-weight: bold; }
+    .beaver-box .checklist input[type="checkbox"]:checked { border-color: #d4a373; color: #d4a373; }
+    .cat-box .checklist input[type="checkbox"]:checked { border-color: #4a90e2; color: #fff; background: #4a90e2; border-color: #4a90e2; }
+
+    .select-btn { 
+      width: 100%; padding: 14px 0; border-radius: 12px; font-family: inherit; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: auto; transition: 0.2s ease; border: 1.5px solid #000;
+    }
+    .beaver-box .select-btn { background-color: rgba(0,0,0,0.03); }
+    .cat-box .select-btn { background-color: rgba(0,0,0,0.03); }
+    .select-btn:hover { background-color: rgba(0,0,0,0.08); }
+
+    /* --- COMMON FORM ELEMENTS --- */
+    .planner-layout { flex-grow: 1; }
+    .planner-left { width: 340px; padding: 40px; display: flex; flex-direction: column; border-right: 1px solid #eee; }
+    .planner-title { font-size: 26px; font-weight: bold; margin-bottom: 30px; }
+    
+    .task-form-group { margin-bottom: 20px; display: flex; flex-direction: column; }
+    .task-form-group label { font-size: 14px; margin-bottom: 8px; font-weight: 600; color: #333; }
+    .task-form-group input, .task-form-group select { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; outline: none; font-size: 15px; }
+    .task-form-group input:focus, .task-form-group select:focus { border-color: #000; }
+    
+    .btn-action-primary { background: transparent; border: 2px solid #000; padding: 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: inherit; font-size: 16px; transition: 0.2s; }
+    .btn-action-primary:hover { background: #f0f0f0; }
+    .btn-action-secondary { background: #000; color: #fff; border: 2px solid #000; padding: 14px; border-radius: 30px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: inherit; font-size: 16px; transition: 0.2s; }
+    .btn-action-secondary:hover { background: #333; }
+
+    .nav-home-btn-container { margin-top: auto; display: flex; justify-content: flex-start; padding-top: 20px;}
+    .btn-home-icon { width: 48px; height: 48px; background: #000; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; border: none; transition: 0.2s; }
+    .btn-home-icon:hover { transform: scale(1.05); }
+
+    /* --- PAGE 3: BEAVER PLANNER --- */
+    #page-beaver { flex-direction: row; }
+    #page-beaver .btn-action-secondary { background: #dfc8a9; border-color: #bba383; color: #725b42; margin-bottom: 40px; }
+    #page-beaver .btn-action-secondary:hover { background: #e5d4bc; }
+    .planner-right-beaver { flex-grow: 1; background: #fff; padding: 40px; overflow-y: auto; position: relative; }
+    .timeline-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+    .timeline-item { display: flex; align-items: center; gap: 20px; cursor: grab; }
+    .time-pill-border { border: 1.5px solid #000; padding: 6px 16px; border-radius: 24px; font-weight: bold; min-width: 80px; text-align: center; }
+    .task-group { display: flex; gap: 10px; flex-wrap: wrap; }
+    .task-text { padding: 6px 14px; border-radius: 10px; font-weight: 500; cursor: pointer; }
+    .task-text:hover { opacity: 0.7; }
+    .timeline-line { flex-grow: 1; height: 1.5px; background: #000; }
+    .timeline-dot { width: 14px; height: 14px; background: #000; border-radius: 50%; }
+
+    /* --- PAGE 4: CAT PLANNER --- */
+    #page-cat { flex-direction: row; }
+    .planner-right-cat { flex-grow: 1; background: #f2efe9; position: relative; overflow: hidden; border-left: 1px solid #ddd; }
+    .cat-board-area { width: 100%; height: 100%; position: relative; }
+    
+    /* Draggable Post-it Notes */
+    .post-it {
+      position: absolute; width: 160px; min-height: 160px; padding: 30px 15px 15px;
+      background: #fff4cc; box-shadow: 2px 4px 10px rgba(0,0,0,0.1); cursor: grab;
+      user-select: none; display: flex; flex-direction: column; justify-content: center;
+      align-items: center; text-align: center; font-weight: 600; transition: transform 0.1s;
+    }
+    .post-it:active { cursor: grabbing; z-index: 1000 !important; transform: scale(1.02); box-shadow: 4px 8px 15px rgba(0,0,0,0.15); }
+    .post-it-close { position: absolute; top: 8px; right: 10px; font-size: 14px; font-family: sans-serif; cursor: pointer; color: #777; transition: color 0.2s; }
+    .post-it-close:hover { color: #000; }
+    
+    .nav-btn-floating { position: absolute; bottom: 20px; left: 20px; z-index: 10; }
+    .footer-deco-img { position: absolute; bottom: 20px; right: 20px; width: 120px; pointer-events: none; z-index: 10; }
+
+    .timeline-empty-container {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .empty-state-centered {
+      position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    }
+    .empty-deco-img { width: 200px; margin-top: 20px; }
+    
+    .speech-bubble {
+      position: relative; background: #333; color: #fff; border-radius: 12px; padding: 15px 25px;
+      font-size: 16px; text-align: center; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .speech-bubble::after {
+      content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 0;
+      border: 15px solid transparent; border-top-color: #333; border-bottom: 0; margin-left: -15px; margin-bottom: -15px;
+    }
+
+    /* --- LOGIN PAGE --- */
+    .login-section { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; height: 100%; }
+    .login-form-card { background: #ffffff; border: 2px solid #e1d5e7; border-radius: 24px; padding: 50px; width: 100%; max-width: 420px; box-shadow: 0 10px 30px rgba(177, 156, 217, 0.1); display: flex; flex-direction: column; align-items: center; }
+    .login-title { font-size: 32px; margin-bottom: 30px; color: #333; font-weight: bold; }
+    .input-group { width: 100%; margin-bottom: 20px; display: flex; flex-direction: column; }
+    .input-group label { font-size: 18px; margin-bottom: 8px; color: #444; font-weight: bold; }
+    .input-group input { font-family: inherit; font-size: 16px; padding: 12px 16px; border: 2px solid #ccc; border-radius: 12px; outline: none; }
+    .forgot-pw { align-self: center; font-size: 14px; color: #666; text-decoration: underline; cursor: pointer; margin-bottom: 30px; }
+    .btn-login-submit { background-color: #d1e5f0; border: 2px solid #a8cde3; color: #445b69; width: 100%; padding: 16px; border-radius: 12px; font-family: inherit; font-weight: bold; cursor: pointer; font-size: 18px; transition: 0.2s; }
+    .btn-login-submit:hover { background-color: #bae1ef; }
+    .guest-link { margin-top: 24px; font-size: 16px; color: #888; text-decoration: underline; cursor: pointer; }
+
+  </style>
+</head>
+<body>
+
+  <div class="main-container">
+    <div class="deco-circle circle-1"></div>
+    <div class="deco-circle circle-2"></div>
+    <div class="deco-circle circle-3"></div>
+    <div class="deco-circle circle-4"></div>
+    <div class="deco-circle circle-5"></div>
+    <div class="deco-circle circle-6"></div>
+
+    <header class="global-header">
+      <div class="logo-text" id="logoBtn">piece & pace</div>
+      <div class="header-actions">
+        <span class="user-greeting" id="userGreeting"></span>
+        <button id="headerLoginBtn" class="header-btn">Log In</button>
+        <button id="headerLogoutBtn" class="header-btn" style="display: none;">Log Out</button>
+      </div>
+    </header>
+
+    <div id="page-home" class="page-content active">
+      <section class="hero-section">
+        <h1 class="hero-title">piece & pace</h1>
+        <p class="hero-subtitle">try making a plan using a planner that fits you perfectly.</p>
+      </section>
+      <section class="character-showcase">
+        <img src="image/Beaver_main.png" alt="Beaver" class="character-image" onerror="this.src='https://via.placeholder.com/220x220?text=Beaver'">
+        <img src="image/Cat_main.png" alt="Cat" class="character-image" onerror="this.src='https://via.placeholder.com/220x220?text=Cat'">
+      </section>
+      <div class="start-action" style="text-align: center;">
+        <button id="startBtn" class="btn-main">Start Making Plan</button>
+      </div>
+    </div>
+
+    <div id="page-selection" class="page-content">
+      <div class="selection-header">
+        <h2 class="selection-title">What type are you?</h2>
+        <p class="selection-subtitle">choose the one that sounds more like you!</p>
+      </div>
+      <div class="cards-container">
+        <div class="type-card">
+          <div class="card-img-wrapper"><img src="image/Beaver_box.png" alt="Beaver" onerror="this.src='https://via.placeholder.com/140x140?text=Beaver'"></div>
+          <div class="info-box beaver-box">
+            <h3 class="type-heading">Planned Beaver</h3>
+            <ul class="checklist">
+              <li><input type="checkbox"> I tend to be prepared</li>
+              <li><input type="checkbox"> Time management is important</li>
+              <li><input type="checkbox"> I feel at ease when I make a plan</li>
+            </ul>
+            <button id="btnGoBeaver" class="select-btn">I'm a Beaver!</button>
+          </div>
+        </div>
+        <div class="type-card">
+          <div class="card-img-wrapper"><img src="image/Cat_box.png" alt="Cat" onerror="this.src='https://via.placeholder.com/140x140?text=Cat'"></div>
+          <div class="info-box cat-box">
+            <h3 class="type-heading">Intuitive Cat</h3>
+            <ul class="checklist">
+              <li><input type="checkbox" checked> I tend to act spontaneously</li>
+              <li><input type="checkbox" checked> Ideas often pop into my head</li>
+              <li><input type="checkbox" checked> I like doing things freely</li>
+            </ul>
+            <button id="btnGoCat" class="select-btn">I'm a Cat!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-beaver" class="page-content planner-layout">
+      <div class="planner-left">
+        <h2 class="planner-title">Add Task</h2>
+        
+        <div class="task-form-group">
+          <label>Task Name</label>
+          <input type="text" id="beaverTaskName" placeholder="e.g. Morning Meeting">
+        </div>
+        <div class="task-form-group">
+          <label>Time</label>
+          <input type="time" id="beaverTaskTime">
+        </div>
+        <div class="task-form-group">
+          <label>Repeat</label>
+          <select id="beaverTaskRepeat"><option value="none">None</option><option value="daily">Daily</option></select>
+        </div>
+        <div class="task-form-group">
+          <label>Highlight</label>
+          <select id="beaverTaskHighlight">
+            <option value="transparent">None (Default)</option>
+            <option value="#f6e8d2">Warm Beige</option>
+            <option value="#d1ecf1">Light Blue</option>
+            <option value="#d4edda">Mint Green</option>
+          </select>
+        </div>
+
+        <button id="beaverAddBtn" class="btn-action-primary">Add to Timeline</button>
+        <button id="beaverSaveBtn" class="btn-action-secondary">Save Timeline</button>
+
+        <div class="nav-home-btn-container">
+          <button class="btn-home-icon navHomeBtn"><svg viewBox="0 0 24 24" fill="white" width="24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="planner-right-beaver">
+        <h3 style="margin-bottom: 5px; font-size: 20px;">Timeline</h3>
+        <p style="font-size: 13px; color: #888;">* Drag to reorder. Double-click to delete.</p>
+        
+        <div id="beaverEmpty" class="timeline-empty-container empty-state-centered">
+          <div class="speech-bubble">No tasks today. Add one to get started!</div>
+          <img src="image/Beaver_blank.png" alt="Beaver" class="empty-deco-img" onerror="this.src='https://via.placeholder.com/200x200?text=Beaver'">
+        </div>
+        
+        <div id="beaverTimeline" class="timeline-list"></div>
+      </div>
+    </div>
+
+    <div id="page-cat" class="page-content planner-layout">
+      <div class="planner-left">
+        <h2 class="planner-title" style="text-align: center;">Add Task</h2>
+        
+        <div class="task-form-group">
+          <label>Task Name</label>
+          <input type="text" id="catTaskName" placeholder="e.g. Brainstorming">
+        </div>
+        
+        <div class="task-form-group">
+          <label>Due Date</label>
+          <input type="date" id="catTaskDate">
+        </div>
+
+        <button id="catAddBtn" class="btn-action-primary">Add to Board</button>
+        <button id="catSaveBtn" class="btn-action-secondary" style="background: #e1d5e7; border-color: #b19cd9; color: #65556b; margin-bottom: 40px;">Save Board</button>
+        
+        <button id="catOrganizeBtn" class="btn-action-primary" style="margin-top: 0; border: 2px dashed #b19cd9; color: #65556b; background: #fff;">Organize Notes</button>
+
+        <div class="nav-home-btn-container">
+          <button class="btn-home-icon navHomeBtn"><svg viewBox="0 0 24 24" fill="white" width="24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></button>
+        </div>
+      </div>
+
+      <div class="planner-right-cat">
+        <div id="catBoard" class="cat-board-area">
+          </div>
+
+        <div id="catEmpty" class="timeline-empty-container empty-state-centered">
+          <div class="speech-bubble">No tasks today. Add one to get started!</div>
+          <img src="image/Cat_blank.png" alt="Cat" class="empty-deco-img" onerror="this.src='https://via.placeholder.com/200x200?text=Cat'">
+        </div>
+
+        <img src="image/Cat_deco.png" alt="Cat Decoration" class="footer-deco-img" onerror="this.src='https://via.placeholder.com/120x120?text=Cat_Deco'">
+      </div>
+    </div>
+
+    <div id="page-login" class="page-content">
+      <div class="login-section">
+        <div class="login-form-card">
+          <h2 class="login-title">Log In</h2>
+          <div class="input-group">
+            <label>Username</label>
+            <input type="text" id="usernameInput" placeholder="Enter your username">
+          </div>
+          <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="passwordInput" placeholder="Enter your password">
+          </div>
+          <a class="forgot-pw">Forgot Password?</a>
+          <button id="doLoginBtn" class="btn-login-submit">LOG IN</button>
+          <a class="guest-link" id="guestBtn">Continue without sign up</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // --- ROUTING ---
+      const pages = {
+        home: document.getElementById("page-home"),
+        selection: document.getElementById("page-selection"),
+        beaver: document.getElementById("page-beaver"),
+        cat: document.getElementById("page-cat"),
+        login: document.getElementById("page-login")
+      };
+
+      function navigateTo(pageKey) {
+        Object.values(pages).forEach(p => p.classList.remove("active"));
+        pages[pageKey].classList.add("active");
+        if(pageKey === 'beaver') loadBeaverData();
+        if(pageKey === 'cat') loadCatData();
+      }
+
+      // --- LOGIC: 로그인 강제 및 다이렉트 이동 (수정된 유일한 부분!) ---
+      document.getElementById("logoBtn").addEventListener("click", () => navigateTo("home"));
+      document.getElementById("headerLoginBtn").addEventListener("click", () => navigateTo("login"));
+      document.getElementById("guestBtn").addEventListener("click", () => navigateTo("home"));
+      
+      const homeBtns = document.querySelectorAll(".navHomeBtn");
+      homeBtns.forEach(btn => btn.addEventListener("click", () => navigateTo("home")));
+
+      // 1. 홈페이지에서 Start 클릭 시, 로그인되어 있고 이전 기록이 있으면 바로 스킵
+      document.getElementById("startBtn").addEventListener("click", () => {
+        const user = localStorage.getItem("piecePaceUser");
+        if (user) {
+          const lastPlanner = localStorage.getItem(`lastVisited_${user}`);
+          if (lastPlanner === 'beaver') navigateTo("beaver");
+          else if (lastPlanner === 'cat') navigateTo("cat");
+          else navigateTo("selection");
+        } else {
+          navigateTo("selection");
+        }
+      });
+
+      // 2. 캐릭터 선택 전 로그인 확인 팝업 (비버)
+      document.getElementById("btnGoBeaver").addEventListener("click", () => {
+        const user = localStorage.getItem("piecePaceUser");
+        if (!user) {
+          alert("Please log in first.");
+          navigateTo("login");
+        } else {
+          localStorage.setItem(`lastVisited_${user}`, 'beaver');
+          navigateTo("beaver");
+        }
+      });
+
+      // 2. 캐릭터 선택 전 로그인 확인 팝업 (고양이)
+      document.getElementById("btnGoCat").addEventListener("click", () => {
+        const user = localStorage.getItem("piecePaceUser");
+        if (!user) {
+          alert("Please log in first.");
+          navigateTo("login");
+        } else {
+          localStorage.setItem(`lastVisited_${user}`, 'cat');
+          navigateTo("cat");
+        }
+      });
+
+
+      // --- AUTH ---
+      function checkUser() {
+        const user = localStorage.getItem("piecePaceUser");
+        const greet = document.getElementById("userGreeting");
+        if(user) {
+          greet.textContent = `Hello, ${user}`;
+          greet.style.display = 'block';
+          document.getElementById("headerLoginBtn").style.display = 'none';
+          document.getElementById("headerLogoutBtn").style.display = 'inline-block';
+        } else {
+          greet.style.display = 'none';
+          document.getElementById("headerLoginBtn").style.display = 'inline-block';
+          document.getElementById("headerLogoutBtn").style.display = 'none';
+        }
+      }
+
+      // 3. 로그인 버튼 로직 (로그인 후 스킵 처리)
+      document.getElementById("doLoginBtn").addEventListener("click", () => {
+        const user = document.getElementById("usernameInput").value.trim();
+        if(user) {
+          localStorage.setItem("piecePaceUser", user);
+          document.getElementById("usernameInput").value = '';
+          document.getElementById("passwordInput").value = '';
+          checkUser();
+          
+          // 로그인 후 이전 기록이 있다면 바로 플래너로 이동
+          const lastPlanner = localStorage.getItem(`lastVisited_${user}`);
+          if (lastPlanner === 'beaver') {
+            navigateTo("beaver");
+          } else if (lastPlanner === 'cat') {
+            navigateTo("cat");
+          } else {
+            navigateTo("home"); 
+          }
+        }
+      });
+
+      document.getElementById("headerLogoutBtn").addEventListener("click", () => {
+        localStorage.removeItem("piecePaceUser");
+        checkUser();
+        navigateTo("home");
+      });
+
+      // Auto-Save Helpers
+      function saveBeaverDataAuto() {
+        const user = localStorage.getItem("piecePaceUser");
+        if(user) localStorage.setItem(`beaver_${user}`, JSON.stringify(beaverBlocks));
+      }
+
+      function saveCatDataAuto() {
+        const user = localStorage.getItem("piecePaceUser");
+        if(user) localStorage.setItem(`cat_${user}`, JSON.stringify(catNotes));
+      }
+
+
+      // --- BEAVER PLANNER LOGIC ---
+      let beaverBlocks = [];
+      const beaverTimeline = document.getElementById("beaverTimeline");
+      const beaverEmpty = document.getElementById("beaverEmpty");
+      let beaverDragged = null;
+
+      document.getElementById("beaverAddBtn").addEventListener("click", () => {
+        const name = document.getElementById("beaverTaskName").value;
+        const time = document.getElementById("beaverTaskTime").value || "--:--";
+        const color = document.getElementById("beaverTaskHighlight").value;
+
+        if(!name) return alert("Enter task name!");
+
+        let block = beaverBlocks.find(b => b.time === time);
+        if(block) block.tasks.push({ name, color });
+        else beaverBlocks.push({ time, tasks: [{ name, color }] });
+        
+        beaverBlocks.sort((a,b) => a.time.localeCompare(b.time));
+        renderBeaver();
+        saveBeaverDataAuto(); 
+        document.getElementById("beaverTaskName").value = '';
+      });
+
+      function renderBeaver() {
+        beaverTimeline.innerHTML = '';
+        if(beaverBlocks.length === 0) {
+          beaverEmpty.style.display = 'flex';
+        } else {
+          beaverEmpty.style.display = 'none';
+          beaverBlocks.forEach((block, bIdx) => {
+            const item = document.createElement("div");
+            item.className = "timeline-item";
+            item.draggable = true;
+            item.dataset.index = bIdx;
+
+            const tasksHTML = block.tasks.map((t, tIdx) => 
+              `<span class="task-text" style="background:${t.color}" data-b="${bIdx}" data-t="${tIdx}">${t.name}</span>`
+            ).join('');
+            
+            item.innerHTML = `
+              <div class="time-pill-border">${block.time}</div>
+              <div class="task-group">${tasksHTML}</div>
+              <div class="timeline-line"></div>
+              <div class="timeline-dot"></div>
+            `;
+            
+            item.querySelectorAll('.task-text').forEach(el => {
+              el.addEventListener('dblclick', (e) => {
+                const b = e.target.dataset.b; const t = e.target.dataset.t;
+                beaverBlocks[b].tasks.splice(t, 1);
+                if(beaverBlocks[b].tasks.length === 0) beaverBlocks.splice(b, 1);
+                renderBeaver();
+                saveBeaverDataAuto(); 
+              });
+            });
+
+            item.addEventListener('dragstart', () => { beaverDragged = item; item.style.opacity = '0.5'; });
+            item.addEventListener('dragend', () => { item.style.opacity = '1'; beaverDragged = null; });
+            beaverTimeline.appendChild(item);
+          });
+        }
+      }
+
+      document.getElementById("beaverSaveBtn").addEventListener("click", () => {
+        const user = localStorage.getItem("piecePaceUser");
+        if(!user) return alert("Login required to save!");
+        localStorage.setItem(`beaver_${user}`, JSON.stringify(beaverBlocks));
+        alert("Timeline Saved!");
+      });
+
+      function loadBeaverData() {
+        const user = localStorage.getItem("piecePaceUser");
+        beaverBlocks = user && localStorage.getItem(`beaver_${user}`) ? JSON.parse(localStorage.getItem(`beaver_${user}`)) : [];
+        renderBeaver();
+      }
+
+
+      // --- CAT PLANNER LOGIC ---
+      let catNotes = [];
+      const catBoard = document.getElementById("catBoard");
+      const catEmpty = document.getElementById("catEmpty");
+      const pastelColors = ['#ffcce6', '#fff4cc', '#cceeff', '#ccffcc', '#e6ccff', '#f2d5d5'];
+      
+      function getFontSize(dueDate) {
+        if(!dueDate) return '16px';
+        const today = new Date();
+        const target = new Date(dueDate);
+        const diffDays = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+        
+        if (diffDays <= 0) return '26px';
+        if (diffDays <= 2) return '22px';
+        if (diffDays <= 5) return '18px';
+        return '15px';
+      }
+
+      document.getElementById("catAddBtn").addEventListener("click", () => {
+        const name = document.getElementById("catTaskName").value.trim();
+        const date = document.getElementById("catTaskDate").value;
+
+        if(!name) return alert("Enter task name!");
+
+        const bRect = catBoard.getBoundingClientRect();
+        const rx = Math.random() * Math.max(0, (bRect.width - 180));
+        const ry = Math.random() * Math.max(0, (bRect.height - 180));
+        const rColor = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+        const rot = (Math.random() * 6 - 3).toFixed(1);
+
+        const newNote = {
+          id: Date.now().toString(),
+          name: name,
+          dueDate: date,
+          x: rx, y: ry,
+          color: rColor,
+          rotation: rot,
+          zIndex: 10
+        };
+
+        catNotes.push(newNote);
+        renderCatBoard();
+        saveCatDataAuto();
+        
+        document.getElementById("catTaskName").value = '';
+        document.getElementById("catTaskDate").value = '';
+      });
+
+      function renderCatBoard() {
+        catBoard.innerHTML = '';
+        if(catNotes.length === 0) {
+          catEmpty.style.display = 'flex';
+        } else {
+          catEmpty.style.display = 'none';
+          catNotes.forEach(note => {
+            const el = document.createElement('div');
+            el.className = 'post-it';
+            el.dataset.id = note.id;
+            el.style.left = note.x + 'px';
+            el.style.top = note.y + 'px';
+            el.style.backgroundColor = note.color;
+            el.style.zIndex = note.zIndex;
+            el.style.transform = `rotate(${note.rotation}deg)`;
+            
+            const fontSize = getFontSize(note.dueDate);
+            el.style.fontSize = fontSize;
+
+            const dateText = note.dueDate ? `<div style="font-size:12px; color:#666; margin-top:10px;">Due: ${note.dueDate}</div>` : '';
+
+            el.innerHTML = `
+              <span class="post-it-close">&times;</span>
+              <div>${note.name}</div>
+              ${dateText}
+            `;
+
+            el.querySelector('.post-it-close').addEventListener('mousedown', (e) => {
+              e.stopPropagation();
+              catNotes = catNotes.filter(n => n.id !== note.id);
+              renderCatBoard();
+              saveCatDataAuto();
+            });
+
+            catBoard.appendChild(el);
+          });
+        }
+      }
+
+      let isDragging = false;
+      let dragElem = null;
+      let startX, startY, initLeft, initTop;
+
+      catBoard.addEventListener('mousedown', (e) => {
+        if(e.target.classList.contains('post-it-close')) return;
+        const postIt = e.target.closest('.post-it');
+        if (postIt) {
+          isDragging = true;
+          dragElem = postIt;
+          startX = e.clientX;
+          startY = e.clientY;
+          initLeft = parseFloat(dragElem.style.left) || 0;
+          initTop = parseFloat(dragElem.style.top) || 0;
+          
+          catNotes.forEach(n => n.zIndex = 10);
+          const noteObj = catNotes.find(n => n.id === dragElem.dataset.id);
+          if(noteObj) noteObj.zIndex = 100;
+          renderCatBoard(); 
+          
+          dragElem = catBoard.querySelector(`.post-it[data-id="${noteObj.id}"]`);
+        }
+      });
+
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging || !dragElem) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        
+        let nx = initLeft + dx;
+        let ny = initTop + dy;
+        
+        const bRect = catBoard.getBoundingClientRect();
+        nx = Math.max(0, Math.min(nx, bRect.width - dragElem.offsetWidth));
+        ny = Math.max(0, Math.min(ny, bRect.height - dragElem.offsetHeight));
+
+        dragElem.style.left = nx + 'px';
+        dragElem.style.top = ny + 'px';
+        dragElem.style.transform = `scale(1.02) rotate(0deg)`;
+      });
+
+      document.addEventListener('mouseup', () => {
+        if (isDragging && dragElem) {
+          const noteObj = catNotes.find(n => n.id === dragElem.dataset.id);
+          if(noteObj) {
+            noteObj.x = parseFloat(dragElem.style.left);
+            noteObj.y = parseFloat(dragElem.style.top);
+          }
+          isDragging = false;
+          dragElem = null;
+          renderCatBoard(); 
+          saveCatDataAuto();
+        }
+      });
+
+      document.getElementById("catOrganizeBtn").addEventListener("click", () => {
+        const margin = 20;
+        const noteWidth = 160;
+        const noteHeight = 160;
+        const bRect = catBoard.getBoundingClientRect();
+        
+        let cx = margin;
+        let cy = margin;
+
+        catNotes.forEach(note => {
+          if (cx + noteWidth > bRect.width - margin) {
+            cx = margin;
+            cy += noteHeight + margin;
+          }
+          note.x = cx;
+          note.y = cy;
+          note.rotation = 0; 
+          cx += noteWidth + margin;
+        });
+        renderCatBoard();
+        saveCatDataAuto();
+      });
+
+      document.getElementById("catSaveBtn").addEventListener("click", () => {
+        const user = localStorage.getItem("piecePaceUser");
+        if(!user) return alert("Login required to save!");
+        localStorage.setItem(`cat_${user}`, JSON.stringify(catNotes));
+        alert("Board Saved!");
+      });
+
+      function loadCatData() {
+        const user = localStorage.getItem("piecePaceUser");
+        catNotes = user && localStorage.getItem(`cat_${user}`) ? JSON.parse(localStorage.getItem(`cat_${user}`)) : [];
+        renderCatBoard();
+      }
+
+      checkUser();
+    });
+  </script>
+</body>
+</html>
