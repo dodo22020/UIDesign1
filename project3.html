@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <title>Minjoo Do | Exercises Archive</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* 다운받은 폰트 파일 연결 */
+    @font-face {
+      font-family: "Kablammo";
+      src: url("assets/fonts/Kablammo-Regular-VariableFont_MORF.ttf");
+    }
+
+    /* -------------------------------------
+       화면 크기에 따른 직접 색상 매핑 (홈페이지와 동일)
+       ------------------------------------- */
+    body {
+      background-color: hsl(45, 35%, 94%); 
+      color: #111;
+      font-family: "Playfair Display", Arial, "Helvetica Neue", Helvetica, sans-serif;
+      margin: 0; 
+      transition: background-color 0.8s ease, color 0.5s ease;
+      overflow-x: hidden;
+    }
+
+    body.dark {
+      background-color: hsl(45, 35%, 15%); 
+      color: white; 
+    }
+
+    /* 태블릿 (1200px 이하) - 민트빛 */
+    @media (max-width: 1200px) {
+      body { background-color: hsl(150, 35%, 94%); }
+      body.dark { background-color: hsl(150, 35%, 15%); }
+    }
+
+    /* 모바일 (768px 이하) - 푸른빛 */
+    @media (max-width: 768px) {
+      body { background-color: hsl(210, 35%, 94%); }
+      body.dark { background-color: hsl(210, 35%, 15%); }
+    }
+
+    /* 작은 모바일 (480px 이하) - 보랏빛 */
+    @media (max-width: 480px) {
+      body { background-color: hsl(280, 35%, 94%); }
+      body.dark { background-color: hsl(280, 35%, 15%); }
+    }
+
+    /* -------------------------------------
+       콘텐츠 레이아웃 스타일
+       ------------------------------------- */
+    .intro-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start; 
+      text-align: left;
+      padding: 60px 50px 50px 50px; 
+      box-sizing: border-box;
+      max-width: 1000px; 
+      margin: 0 auto; 
+    }
+
+    .intro-paragraph {
+      font-size: 1.8rem; 
+      line-height: 1.6;
+      margin-bottom: 40px;
+    }
+
+    .name-effect {
+      font-family: "Kablammo", sans-serif;
+      font-variation-settings: "MORF" 0;
+      transition: font-variation-settings 1.3s ease;
+      display: inline-block;
+    }
+    .name-effect:hover {
+      font-variation-settings: "MORF" 60;
+    }
+
+    /* 하이퍼링크 스타일 (홈페이지와 동일한 밑줄 및 점진적 색상 변화) */
+    .intro-paragraph a {
+      color: #111; 
+      text-decoration: underline;
+      transition: color 0.5s ease; 
+    }
+    .intro-paragraph a:hover {
+      color: #0000ff; 
+    }
+    body.dark .intro-paragraph a {
+      color: white;
+    }
+    body.dark .intro-paragraph a:hover {
+      color: #74b9ff; 
+    }
+
+    /* -------------------------------------
+       버튼 컴포넌트 스타일 (Go Back 추가)
+       ------------------------------------- */
+    .button-group {
+      display: flex;
+      gap: 15px; /* 버튼 사이의 간격 */
+      margin-bottom: 30px;
+    }
+
+    #darkmode, .btn-goback {
+      padding: 10px 25px;
+      font-family: inherit;
+      font-size: 1rem;
+      cursor: pointer;
+      background: transparent;
+      border: 1px solid currentColor;
+      color: currentColor;
+      border-radius: 25px; /* 알약 모양 라운드 */
+      transition: all 0.3s ease;
+      text-decoration: none; /* 하이퍼링크 밑줄 제거 */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+    }
+
+    #darkmode:hover, .btn-goback:hover {
+      background: currentColor;
+      color: #f5f5f5;
+    }
+    body.dark #darkmode:hover, body.dark .btn-goback:hover {
+      color: #222;
+    }
+
+    /* -------------------------------------
+       위로 가기(Back to Top) 버튼
+       ------------------------------------- */
+    #back-to-top {
+      position: fixed;
+      bottom: 40px;
+      left: 40px;
+      padding: 12px 24px;
+      font-family: inherit;
+      font-size: 1rem;
+      background: #111;
+      color: #f5f5f5;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      z-index: 100;
+      opacity: 0; 
+      pointer-events: none; 
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    #back-to-top.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    #back-to-top:hover {
+      background: #0000ff;
+      color: white;
+      transform: translateY(-3px); 
+    }
+
+    body.dark #back-to-top {
+      background: white;
+      color: #222;
+    }
+    body.dark #back-to-top:hover {
+      background: #74b9ff;
+      color: #111;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="intro-section">
+    <p class="intro-paragraph">
+      This page archives the exercises and additional practice work completed during class. This collection includes 
+      <a href="ascii/interior-minjoodo.html">ASCII Town</a>, 
+      <a href="myshelf/myshelf.html">Code My Shelf</a>, 
+      <a href="emoji.html">Emoji Animation</a>, 
+      <a href="still life home.html">Coding from Life: CSS Still Life</a>, and 
+      <a href="poster.html">Interactive Poster</a>.
+    </p>
+    
+    <div class="button-group">
+      <button id="darkmode">Dark Mode</button>
+      <a href="index.html" class="btn-goback">Go Back</a>
+    </div>
+
+    <p style="font-style: italic; opacity: 0.4; margin: 0; font-size: 0.95rem;">
+      Minjoo Do © 2026
+    </p>
+  </section>
+
+  <button id="back-to-top">↑ Top</button>
+
+  <script>
+    // 다크모드 토글 버튼 로직
+    document.querySelector('#darkmode').addEventListener('click', function() {
+      document.body.classList.toggle('dark');
+    });
+
+    // 위로 가기 버튼 스크롤 제어 로직
+    const backToTopBtn = document.getElementById('back-to-top');
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    });
+
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 300) {
+        backToTopBtn.classList.add('visible');
+      } else {
+        backToTopBtn.classList.remove('visible');
+      }
+    });
+  </script>
+</body>
+
+</html>
