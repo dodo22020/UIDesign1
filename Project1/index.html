@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time to Clean up!</title>
+    <style>
+        /* 기본 모바일 프레임 설정 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e5e5ea;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #app-container {
+            width: 375px;
+            height: 812px;
+            background-color: #f2f2f7;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 화면 공통 */
+        .screen {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #f2f2f7;
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+        }
+        .screen.active {
+            display: flex;
+        }
+
+        /* 패딩 영역 */
+        .content-padding { padding: 40px 24px 24px 24px; }
+
+        /* 타이포그래피 */
+        h1 { font-size: 28px; font-weight: 800; margin: 0 0 20px 0; color: #1c1c1e; }
+        h2 { font-size: 18px; font-weight: 700; margin: 20px 0 10px 0; color: #1c1c1e; }
+        p { margin: 0; color: #8e8e93; font-size: 14px; }
+
+        /* 컴포넌트: 스토리지 카드 */
+        .storage-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+        }
+        .storage-text { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+        .storage-text span { color: #007aff; }
+        .progress-bar {
+            height: 8px;
+            background: #e5e5ea;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-fill {
+            width: 68%; /* 87.06 / 128 */
+            height: 100%;
+            background: linear-gradient(90deg, #007aff, #34c759, #ff9500);
+            border-radius: 4px;
+        }
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #007aff;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* 오버레이 팝업 (슬라이드 아님) */
+        .overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .overlay.active { display: flex; }
+        
+        .daily-card {
+            width: 85%;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            animation: popIn 0.3s ease-out;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .daily-img {
+            width: 100%;
+            height: 250px;
+            background: url('https://images.unsplash.com/photo-1591160690555-5debfba289f0?q=80&w=600&auto=format&fit=crop') center/cover;
+        }
+        .daily-info { padding: 20px; }
+        .daily-info h3 { margin: 0 0 5px 0; font-size: 18px; }
+        .daily-info p { font-size: 13px; margin-bottom: 20px; }
+        .action-buttons { display: flex; gap: 10px; }
+        
+        .btn-keep, .btn-discard {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-keep { background: #f2f2f7; color: #1c1c1e; }
+        .btn-discard { background: #ff3b30; color: white; }
+
+        /* 휴지통 화면 */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .btn-back { background: none; border: none; color: #007aff; font-size: 16px; cursor: pointer; padding: 0; }
+        
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .grid-item {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #d1d1d6;
+            border-radius: 8px;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+        .list-icon { width: 30px; height: 30px; background: #ffcc00; border-radius: 6px; margin-right: 12px; }
+        .list-info flex-grow { flex-grow: 1; }
+        .list-info h4 { margin: 0 0 4px 0; font-size: 15px; }
+        .list-info p { font-size: 12px; }
+
+        .bottom-actions {
+            position: absolute;
+            bottom: 30px; left: 24px; right: 24px;
+            display: flex;
+            gap: 10px;
+        }
+        .bottom-actions button { flex: 1; }
+
+        /* 삭제 확인 모달 */
+        .confirm-modal {
+            width: 80%; background: white; border-radius: 20px; padding: 24px; text-align: center;
+        }
+        .confirm-modal h3 { margin: 0 0 10px 0; }
+        .confirm-modal p { margin-bottom: 20px; font-size: 13px; color: #ff3b30; }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    
+    <div id="screen-home" class="screen active content-padding">
+        <h1>Time to Clean up!</h1>
+        <div class="storage-card">
+            <div class="storage-text"><span>87.06GB</span> of 128GB Used</div>
+            <div class="progress-bar"><div class="progress-fill"></div></div>
+            <button class="btn-primary" onclick="openDailyPopup()">Start Organizing Files</button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 10px;">
+            <p style="color: #007aff; cursor: pointer;" onclick="goToFileManager()">See More...</p>
+        </div>
+    </div>
+
+    <div id="overlay-daily" class="overlay">
+        <div class="daily-card">
+            <div class="daily-img"></div>
+            <div class="daily-info">
+                <h3>IMG_8821.jpg</h3>
+                <p>A photo of a white puppy sitting</p>
+                <div class="action-buttons">
+                    <button class="btn-keep" onclick="handleKeep()">Keep</button>
+                    <button class="btn-discard" onclick="handleDiscard()">Discard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-deleted" class="screen content-padding">
+        <div class="header">
+            <button class="btn-back" onclick="goHome()">❮ Back</button>
+            <button class="btn-back" style="font-weight: 600;">Select</button>
+        </div>
+        <h1>Recently Deleted</h1>
+        <p style="margin-bottom: 20px;">Items will be permanently deleted after 30 days.</p>
+
+        <h2>Photos</h2>
+        <div class="grid" id="photo-grid">
+            <div class="grid-item" style="background-image: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=200&auto=format&fit=crop');"></div>
+            <div class="grid-item" style="background-image: url('https://images.unsplash.com/photo-1454496522488-7a8e488e8606?q=80&w=200&auto=format&fit=crop');"></div>
+        </div>
+
+        <h2>Documents</h2>
+        <div class="list-item">
+            <div class="list-icon" style="background:#ff3b30;"></div>
+            <div class="list-info">
+                <h4>Project_Report.pdf</h4>
+                <p>2.4 MB • Apr 12, 2026</p>
+            </div>
+        </div>
+
+        <div class="bottom-actions">
+            <button class="btn-keep" onclick="goHome()">Restore</button>
+            <button class="btn-discard" onclick="openConfirmModal()">Delete Forever</button>
+        </div>
+    </div>
+
+    <div id="overlay-confirm" class="overlay">
+        <div class="confirm-modal">
+            <h3>⚠️ Confirm deleting files</h3>
+            <p>This action cannot be reversed.<br>Are you sure you want to delete this file?</p>
+            <div class="action-buttons">
+                <button class="btn-keep" onclick="closeConfirmModal()">Back</button>
+                <button class="btn-discard" onclick="executeDelete()">Delete Forever</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // DOM Elements
+    const screenHome = document.getElementById('screen-home');
+    const screenDeleted = document.getElementById('screen-deleted');
+    const overlayDaily = document.getElementById('overlay-daily');
+    const overlayConfirm = document.getElementById('overlay-confirm');
+    const photoGrid = document.getElementById('photo-grid');
+
+    // Navigation & Actions
+    function openDailyPopup() {
+        overlayDaily.classList.add('active');
+    }
+
+    function handleKeep() {
+        // Keep 로직: 모달만 닫기
+        overlayDaily.classList.remove('active');
+        alert("File has been kept!");
+    }
+
+    function handleDiscard() {
+        // Discard 로직: 휴지통으로 이동 시뮬레이션 후 화면 전환
+        overlayDaily.classList.remove('active');
+        
+        // 방금 지운 강아지 사진을 휴지통 그리드에 추가
+        const newDiscardedItem = document.createElement('div');
+        newDiscardedItem.className = 'grid-item';
+        newDiscardedItem.style.backgroundImage = "url('https://images.unsplash.com/photo-1591160690555-5debfba289f0?q=80&w=200&auto=format&fit=crop')";
+        photoGrid.appendChild(newDiscardedItem);
+
+        goToFileManager();
+    }
+
+    function goToFileManager() {
+        screenHome.classList.remove('active');
+        screenDeleted.classList.add('active');
+    }
+
+    function goHome() {
+        screenDeleted.classList.remove('active');
+        screenHome.classList.add('active');
+    }
+
+    function openConfirmModal() {
+        overlayConfirm.classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        overlayConfirm.classList.remove('active');
+    }
+
+    function executeDelete() {
+        overlayConfirm.classList.remove('active');
+        alert("Files deleted forever. Storage updated!");
+        goHome(); // 삭제 완료 후 홈으로 복귀
+    }
+</script>
+
+</body>
+</html>
